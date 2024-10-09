@@ -70,7 +70,7 @@ $tasks = $stmt->fetchAll();
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .task-row {
-            font-size: 16px; /* Menyamakan ukuran teks di seluruh kolom */
+            font-size: 16px; 
         }
 
         .badge-status {
@@ -85,25 +85,7 @@ $tasks = $stmt->fetchAll();
 
         .badge-incomplete {
             background-color: orange;
-            color: white;
         }
-
-        .completed-task {
-            color: #333;
-            display: flex;
-            align-items: center; /* Untuk menyelaraskan teks dan centang secara vertikal */
-        }
-
-        .task-completed-icon {
-            margin-left: 10px;
-            color: green;
-            font-size: 20px;
-        }
-
-        .action-buttons {
-            font-size: 16px;
-        }
-
     </style>
 </head>
 <body>
@@ -130,12 +112,14 @@ $tasks = $stmt->fetchAll();
             </thead>
             <tbody>
                 <?php foreach ($tasks as $task): ?>
-                    <tr class="task-row">
-                        <td class="completed-task">
-                            <?php echo htmlspecialchars($task['description']); ?>
-                            <?php if ($task['is_completed']): ?>
-                                <span class="task-completed-icon">&#10004;</span> <!-- Icon centang hijau -->
-                            <?php endif; ?>
+                    <tr>
+                        <td class="<?php echo $task['is_completed'] ? 'completed-task' : 'incomplete-task'; ?>">
+                            <?php echo $task['description']; ?>
+                        </td>
+                        <td>
+                            <span class="badge <?php echo $task['is_completed'] ? 'badge-completed' : 'badge-incomplete'; ?>">
+                                <?php echo $task['is_completed'] ? 'Completed' : 'Incomplete'; ?>
+                            </span>
                         </td>
                         <td>
                             <span class="badge badge-status <?php echo $task['is_completed'] ? 'badge-completed' : 'badge-incomplete'; ?>">

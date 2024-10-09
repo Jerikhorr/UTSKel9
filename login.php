@@ -36,6 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Todo List</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .input-group-text {
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -54,11 +59,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="togglePassword">
+                            <img src="https://img.icons8.com/ios-filled/16/000000/visible.png" id="passwordIcon" alt="Show Password"/>
+                        </span>
+                    </div>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
         <p class="mt-3">Don't have an account? <a href="register.php">Register here</a></p>
     </div>
+
+    <script>
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordField = document.getElementById('password');
+        const passwordIcon = document.getElementById('passwordIcon');
+        
+        togglePassword.addEventListener('mousedown', function() {
+            passwordField.type = 'text';
+            passwordIcon.src = 'https://img.icons8.com/ios-filled/16/000000/invisible.png'; // Change to "invisible" icon
+        });
+
+        togglePassword.addEventListener('mouseup', function() {
+            passwordField.type = 'password';
+            passwordIcon.src = 'https://img.icons8.com/ios-filled/16/000000/visible.png'; // Change back to "visible" icon
+        });
+
+        togglePassword.addEventListener('mouseleave', function() {
+            passwordField.type = 'password';
+            passwordIcon.src = 'https://img.icons8.com/ios-filled/16/000000/visible.png'; // Ensure icon resets when mouse leaves
+        });
+    </script>
 </body>
 </html>
