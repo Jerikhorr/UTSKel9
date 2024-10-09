@@ -131,7 +131,7 @@ $tasks = $stmt->fetchAll();
                 <tr>
                     <th>Task</th>
                     <th class="text-center">Status</th>
-                    <th class="action-header">Actions</th> <!-- Teks Actions di tengah -->
+                    <th class="action-header">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -152,9 +152,9 @@ $tasks = $stmt->fetchAll();
                                     <?php echo $task['is_completed'] ? 'Mark Incomplete' : 'Mark Complete'; ?>
                                 </button>
                             </form>
-                            <form method="POST" action="" class="d-inline">
+                            <form method="GET" action="edit_task.php" class="d-inline">
                                 <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
-                                <button type="submit" name="edit_task" class="btn btn-sm btn-warning">Edit</button>
+                                <button type="submit" class="btn btn-sm btn-warning">Edit</button>
                             </form>
                             <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="<?php echo $task['id']; ?>">
                                 Delete
@@ -166,9 +166,9 @@ $tasks = $stmt->fetchAll();
         </table>
     </div>
 
-    <!-- Modal Konfirmasi Hapus -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
@@ -181,7 +181,7 @@ $tasks = $stmt->fetchAll();
                 </div>
                 <div class="modal-footer">
                     <form method="POST" action="" id="deleteForm">
-                        <input type="hidden" name="task_id" id="taskId" value="">
+                        <input type="hidden" name="task_id" id="modalTaskId">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <button type="submit" name="delete_task" class="btn btn-danger">Delete</button>
                     </form>
@@ -193,11 +193,12 @@ $tasks = $stmt->fetchAll();
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Capture the task ID when the delete button is clicked
         $('#deleteModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var taskId = button.data('id'); // Extract info from data-* attributes
             var modal = $(this);
-            modal.find('#taskId').val(taskId); // Set the task id in the hidden input
+            modal.find('#modalTaskId').val(taskId); // Set the task ID in the modal
         });
     </script>
 </body>
