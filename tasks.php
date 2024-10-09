@@ -193,7 +193,6 @@ $tasks = $stmt->fetchAll();
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Capture the task ID when the delete button is clicked
         $('#deleteModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var taskId = button.data('id'); // Extract info from data-* attributes
