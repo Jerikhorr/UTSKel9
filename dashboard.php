@@ -70,9 +70,11 @@ $tasks = $stmt->fetchAll();
 </head>
 <body>
     <div class="container mt-5">
+<<<<<<< Updated upstream
         <h1>Hao, <?php echo $_SESSION['username']; ?>!</h1>
 =======
         <h1>Pala bapak kau, <?php echo $_SESSION['username']; ?>!</h1>
+>>>>>>> Stashed changes
         <a href="profile.php" class="btn btn-info mb-3">View Profile</a>
         <a href="logout.php" class="btn btn-danger mb-3">Logout</a>
 
