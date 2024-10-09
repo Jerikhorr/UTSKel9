@@ -70,7 +70,7 @@ $tasks = $stmt->fetchAll();
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Halo, <?php echo $_SESSION['username']; ?>!</h1>
+        <h1>Hao, <?php echo $_SESSION['username']; ?>!</h1>
         <a href="profile.php" class="btn btn-info mb-3">View Profile</a>
         <a href="logout.php" class="btn btn-danger mb-3">Logout</a>
 
