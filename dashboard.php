@@ -8,19 +8,16 @@ if (!isLoggedIn()) {
 
 $user_id = $_SESSION['user_id'];
 
-// Create new todo list
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_list'])) {
     $list_title = sanitize($_POST['list_title']);  // Ambil judul yang diinput user
     $list_category = sanitize($_POST['list_category']);  // Ambil kategori yang dipilih user
 
-    // Pastikan judul dan kategori tidak kosong
     if (!empty($list_title) && !empty($list_category)) {
         $stmt = $pdo->prepare("INSERT INTO todo_lists (user_id, title, category) VALUES (?, ?, ?)");
         $stmt->execute([$user_id, $list_title, $list_category]);
     }
 }
 
-// Delete todo list
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_list'])) {
     $list_id = sanitize($_POST['list_id']);
     $stmt = $pdo->prepare("DELETE FROM todo_lists WHERE id = ? AND user_id = ?");
@@ -73,13 +70,12 @@ $tasks = $stmt->fetchAll();
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Welcome, <?php echo $_SESSION['username']; ?>!</h1>
+        <h1>Halo, <?php echo $_SESSION['username']; ?>!</h1>
         <a href="profile.php" class="btn btn-info mb-3">View Profile</a>
         <a href="logout.php" class="btn btn-danger mb-3">Logout</a>
 
-        <h2>Your Todo Lists</h2>
+        <h2>To-Do List</h2>
 
-        <!-- Form untuk membuat list baru dengan judul dan kategori -->
         <form method="POST" action="" class="mb-3">
             <div class="input-group mb-2">
                 <input type="text" class="form-control" name="list_title" placeholder="Enter list title" required>
