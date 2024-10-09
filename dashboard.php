@@ -24,12 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_list'])) {
     $stmt->execute([$list_id, $user_id]);
 }
 
-// Fetch todo lists
 $stmt = $pdo->prepare("SELECT * FROM todo_lists WHERE user_id = ? ORDER BY created_at DESC");
 $stmt->execute([$user_id]);
 $todo_lists = $stmt->fetchAll();
 
-// Search tasks
 $search_query = isset($_GET['search']) ? sanitize($_GET['search']) : '';
 $filter = isset($_GET['filter']) ? sanitize($_GET['filter']) : 'all';
 
@@ -93,7 +91,6 @@ $tasks = $stmt->fetchAll();
             </div>
         </form>
 
-        <!-- List todo yang sudah dibuat -->
         <div class="row">
             <?php foreach ($todo_lists as $list): ?>
                 <div class="col-md-4 mb-3">

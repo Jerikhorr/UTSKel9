@@ -69,13 +69,11 @@ $tasks = $stmt->fetchAll();
     <title><?php echo $list['title']; ?> - Todo List</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .task-row {
-            font-size: 16px; 
-        }
-
         .badge-status {
-            font-size: 16px;
-            padding: 5px 10px;
+            width: 130px; /* Samakan ukuran dengan tombol Action */
+            text-align: center; /* Posisikan teks di tengah */
+            padding: 8px; /* Tambahkan padding untuk konsistensi */
+            font-size: 14px; /* Sesuaikan ukuran font */
         }
 
         .badge-completed {
@@ -85,6 +83,32 @@ $tasks = $stmt->fetchAll();
 
         .badge-incomplete {
             background-color: orange;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center; /* Ensure the buttons are centered */
+            gap: 10px; /* Add space between buttons */
+        }
+
+        .btn {
+            width: 130px; /* Set fixed width for buttons to ensure uniform size */
+            text-align: center;
+        }
+
+        td.text-center {
+            text-align: center;
+        }
+
+        /* Custom alignment for Actions header */
+        th.action-header {
+            text-align: center; /* Align "Actions" header to the center */
+            width: 250px; /* Set fixed width for the Actions column to match buttons */
+        }
+
+        th.text-center {
+            text-align: center;
         }
     </style>
 </head>
@@ -106,22 +130,17 @@ $tasks = $stmt->fetchAll();
             <thead>
                 <tr>
                     <th>Task</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th class="text-center">Status</th>
+                    <th class="action-header">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($tasks as $task): ?>
                     <tr>
-                        <td class="<?php echo $task['is_completed'] ? 'completed-task' : 'incomplete-task'; ?>">
-                            <?php echo $task['description']; ?>
-                        </td>
                         <td>
-                            <span class="badge <?php echo $task['is_completed'] ? 'badge-completed' : 'badge-incomplete'; ?>">
-                                <?php echo $task['is_completed'] ? 'Completed' : 'Incomplete'; ?>
-                            </span>
+                            <?php echo htmlspecialchars($task['description']); ?>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <span class="badge badge-status <?php echo $task['is_completed'] ? 'badge-completed' : 'badge-incomplete'; ?>">
                                 <?php echo $task['is_completed'] ? 'Completed' : 'Incomplete'; ?>
                             </span>
@@ -133,51 +152,53 @@ $tasks = $stmt->fetchAll();
                                     <?php echo $task['is_completed'] ? 'Mark Incomplete' : 'Mark Complete'; ?>
                                 </button>
                             </form>
-                            <form method="POST" action="" class="d-inline">
+                            <form method="GET" action="edit_task.php" class="d-inline">
                                 <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
-                                <button type="submit" name="edit_task" class="btn btn-sm btn-warning">Edit</button>
+                                <button type="submit" class="btn btn-sm btn-warning">Edit</button>
                             </form>
-                            <button type="button" class="btn btn-sm btn-danger" onclick="showDeleteModal(<?php echo $task['id']; ?>)">Delete</button>
+                            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="<?php echo $task['id']; ?>">
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
+    </div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to delete this task?
-                    </div>
-                    <div class="modal-footer">
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this task?
+                </div>
+                <div class="modal-footer">
+                    <form method="POST" action="" id="deleteForm">
+                        <input type="hidden" name="task_id" id="modalTaskId">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <form id="deleteForm" method="POST" action="">
-                            <input type="hidden" name="task_id" id="modalTaskId">
-                            <button type="submit" name="delete_task" class="btn btn-danger">Delete</button>
-                        </form>
-                    </div>
+                        <button type="submit" name="delete_task" class="btn btn-danger">Delete</button>
+                    </form>
                 </div>
             </div>
         </div>
-
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-        function showDeleteModal(taskId) {
-            document.getElementById('modalTaskId').value = taskId;
-            $('#deleteModal').modal('show');
-        }
+        $('#deleteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var taskId = button.data('id'); // Extract info from data-* attributes
+            var modal = $(this);
+            modal.find('#modalTaskId').val(taskId); // Set the task ID in the modal
+        });
     </script>
 </body>
 </html>
