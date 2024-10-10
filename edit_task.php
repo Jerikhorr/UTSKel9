@@ -40,6 +40,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_task'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Task - Todo List</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: rgb(2, 0, 36);
+            background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(6, 6, 89, 1) 22%, rgba(9, 9, 121, 1) 35%, rgba(6, 87, 173, 1) 60%, rgba(6, 96, 179, 1) 63%, rgba(0, 212, 255, 1) 100%);
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9); /* Kontainer putih transparan */
+            border-radius: 8px; /* Sudut membulat */
+            padding: 20px; /* Ruang di dalam kontainer */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Bayangan halus */
+            margin-top: 50px; /* Jarak atas */
+            animation: fadeIn 1s ease-in; /* Animasi fade-in untuk kontainer */
+        }
+
+        h1 {
+            color: #343a40; /* Warna judul */
+            margin-bottom: 20px; /* Jarak bawah judul */
+            text-align: center; /* Pusatkan judul */
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Warna tombol biru */
+            border-color: #007bff; /* Border tombol */
+            transition: background-color 0.3s ease; /* Transisi untuk hover */
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Warna tombol saat hover */
+            border-color: #0056b3; /* Border tombol saat hover */
+        }
+
+        .btn-success {
+            background-color: #28a745; /* Warna tombol hijau */
+            border-color: #28a745; /* Border tombol */
+            transition: background-color 0.3s ease; /* Transisi untuk hover */
+        }
+
+        .btn-success:hover {
+            background-color: #218838; /* Warna tombol saat hover */
+            border-color: #1e7e34; /* Border tombol saat hover */
+        }
+
+        .form-group label {
+            font-weight: bold; /* Tebalkan label */
+            color: #343a40; /* Ubah warna label */
+        }
+
+        input.form-control {
+            transition: transform 0.2s, box-shadow 0.2s; /* Transisi untuk efek */
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
