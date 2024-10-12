@@ -20,26 +20,27 @@ $user = $stmt->fetch();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="container mt-5">
-        <h1>Profile Information</h1>
-        <table class="table">
-            <tr>
-                <th>Username:</th>
-                <td><?php echo $user['username']; ?></td>
-            </tr>
-            <tr>
-                <th>Email:</th>
-                <td><?php echo $user['email']; ?></td>
-            </tr>
-        </table>
-        <a href="edit_profile.php" class="btn btn-primary">Edit Profile</a>
-        <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
+<body class="bg-gray-100">
+    <div class="container mx-auto mt-10">
+        <div class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+            <h1 class="text-2xl font-bold mb-6 text-center">Profile Information</h1>
+            <table class="table-auto w-full">
+                <tr>
+                    <th class="text-left py-2">Username:</th>
+                    <td class="py-2"><?php echo $user['username']; ?></td>
+                </tr>
+                <tr>
+                    <th class="text-left py-2">Email:</th>
+                    <td class="py-2"><?php echo $user['email']; ?></td>
+                </tr>
+            </table>
+            <div class="flex justify-between mt-6">
+                <a href="edit_profile.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit Profile</a>
+                <a href="dashboard.php" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Back to Dashboard</a>
+            </div>
+        </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
