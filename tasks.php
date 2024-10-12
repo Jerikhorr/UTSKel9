@@ -69,59 +69,78 @@ $tasks = $stmt->fetchAll();
     <title><?php echo $list['title']; ?> - Todo List</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .badge-status {
-            width: 130px; /* Samakan ukuran dengan tombol Action */
-            text-align: center; /* Posisikan teks di tengah */
-            padding: 8px; /* Tambahkan padding untuk konsistensi */
-            font-size: 14px; /* Sesuaikan ukuran font */
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            max-width: 900px;
+            margin-top: 40px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .btn-custom {
+            background-color: #6c63ff;
+            color: #fff;
+        }
+
+        .btn-custom:hover {
+            box-shadow: 0 0 0 0 rem;
+            background-color: #7300FF;
+            color: #fff;
+
         }
 
         .badge-completed {
-            background-color: green;
+            background-color: #28a745;
             color: white;
         }
 
         .badge-incomplete {
-            background-color: orange;
-            color: white;
+            background-color: #ffc107;
+            color: #343a40;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .form-control {
+            border-radius: 20px;
+        }
+
+        .input-group-append .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-radius: 20px;
         }
 
         .action-buttons {
             display: flex;
-            justify-content: center; /* Ensure the buttons are centered */
-            gap: 10px; /* Add space between buttons */
+            justify-content: center;
+            gap: 10px;
         }
 
-        .btn {
-            width: 130px; /* Set fixed width for buttons to ensure uniform size */
-            text-align: center;
-        }
-
-        td.text-center {
-            text-align: center;
-        }
-
-        /* Custom alignment for Actions header */
-        th.action-header {
-            text-align: center; /* Align "Actions" header to the center */
-            width: 250px; /* Set fixed width for the Actions column to match buttons */
-        }
-
-        th.text-center {
-            text-align: center;
+        .modal-header {
+            background-color: #6c63ff;
+            color: #fff;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1><?php echo $list['title']; ?></h1>
-        <a href="dashboard.php" class="btn btn-primary mb-3">Back to Dashboard</a>
+    <div class="container">
+        <h2 class="mb-4"><?php echo htmlspecialchars($list['title']); ?></h2>
+        <a href="dashboard.php" class="btn btn-custom mb-3">Back to Dashboard</a>
 
         <form method="POST" action="" class="mb-3">
             <div class="input-group">
                 <input type="text" class="form-control" name="task_description" placeholder="New task description" required>
                 <div class="input-group-append">
-                    <button type="submit" name="new_task" class="btn btn-primary">Add Task</button>
+                    <button type="submit" name="new_task" class="btn btn-custom">Add Task</button>
                 </div>
             </div>
         </form>
@@ -131,17 +150,15 @@ $tasks = $stmt->fetchAll();
                 <tr>
                     <th>Task</th>
                     <th class="text-center">Status</th>
-                    <th class="action-header">Actions</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($tasks as $task): ?>
                     <tr>
-                        <td>
-                            <?php echo htmlspecialchars($task['description']); ?>
-                        </td>
+                        <td><?php echo htmlspecialchars($task['description']); ?></td>
                         <td class="text-center">
-                            <span class="badge badge-status <?php echo $task['is_completed'] ? 'badge-completed' : 'badge-incomplete'; ?>">
+                            <span class="badge <?php echo $task['is_completed'] ? 'badge-completed' : 'badge-incomplete'; ?> btn">
                                 <?php echo $task['is_completed'] ? 'Completed' : 'Incomplete'; ?>
                             </span>
                         </td>
@@ -171,13 +188,14 @@ $tasks = $stmt->fetchAll();
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to delete this task?
+                    <p>Are you sure you want to delete this task? This action cannot be undone.</p>
+                    <p><strong>Task Description:</strong> <span id="taskDescription"></span></p>
                 </div>
                 <div class="modal-footer">
                     <form method="POST" action="" id="deleteForm">
@@ -194,10 +212,13 @@ $tasks = $stmt->fetchAll();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $('#deleteModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var taskId = button.data('id'); // Extract info from data-* attributes
+            var button = $(event.relatedTarget);
+            var taskId = button.data('id');
+            var taskDescription = button.closest('tr').find('td:first').text(); // Get the task description
+
             var modal = $(this);
-            modal.find('#modalTaskId').val(taskId); // Set the task ID in the modal
+            modal.find('#modalTaskId').val(taskId);
+            modal.find('#taskDescription').text(taskDescription); // Set the task description in the modal
         });
     </script>
 </body>

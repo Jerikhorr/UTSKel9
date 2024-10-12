@@ -23,12 +23,15 @@ if (!$task) {
 }
 
 // Handle the task update
+$update_msg = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_task'])) {
     $updated_description = sanitize($_POST['updated_description']);
     if (!empty($updated_description)) {
         $stmt = $pdo->prepare("UPDATE tasks SET description = ? WHERE id = ?");
         $stmt->execute([$updated_description, $task_id]);
         redirect('tasks.php?list_id=' . $task['list_id']);
+    } else {
+        $update_msg = 'Please fill out the task description.';
     }
 }
 ?>
@@ -38,78 +41,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_task'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Task - Todo List</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Edit Task</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background: rgb(2, 0, 36);
-            background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(6, 6, 89, 1) 22%, rgba(9, 9, 121, 1) 35%, rgba(6, 87, 173, 1) 60%, rgba(6, 96, 179, 1) 63%, rgba(0, 212, 255, 1) 100%);
-            font-family: Arial, sans-serif;
-            color: #fff;
+        .back-button {
+            background-color: #6c63ff; /* Warna tombol sebelum di-hover */
+            color: white; /* Warna teks tombol */
+            border-radius: 0.375rem; /* Sudut membulat */
+            transition: background-color 0.3s; /* Transisi untuk efek hover */
         }
-
-        .container {
-            background-color: rgba(255, 255, 255, 0.9); /* Kontainer putih transparan */
-            border-radius: 8px; /* Sudut membulat */
-            padding: 20px; /* Ruang di dalam kontainer */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Bayangan halus */
-            margin-top: 50px; /* Jarak atas */
-            animation: fadeIn 1s ease-in; /* Animasi fade-in untuk kontainer */
-        }
-
-        h1 {
-            color: #343a40; /* Warna judul */
-            margin-bottom: 20px; /* Jarak bawah judul */
-            text-align: center; /* Pusatkan judul */
-        }
-
-        .btn-primary {
-            background-color: #007bff; /* Warna tombol biru */
-            border-color: #007bff; /* Border tombol */
-            transition: background-color 0.3s ease; /* Transisi untuk hover */
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3; /* Warna tombol saat hover */
-            border-color: #0056b3; /* Border tombol saat hover */
-        }
-
-        .btn-success {
-            background-color: #28a745; /* Warna tombol hijau */
-            border-color: #28a745; /* Border tombol */
-            transition: background-color 0.3s ease; /* Transisi untuk hover */
-        }
-
-        .btn-success:hover {
-            background-color: #218838; /* Warna tombol saat hover */
-            border-color: #1e7e34; /* Border tombol saat hover */
-        }
-
-        .form-group label {
-            font-weight: bold; /* Tebalkan label */
-            color: #343a40; /* Ubah warna label */
-        }
-
-        input.form-control {
-            transition: transform 0.2s, box-shadow 0.2s; /* Transisi untuk efek */
+        
+        .back-button:hover {
+            background-color: #5b54e0; /* Warna tombol saat di-hover */
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1>Edit Task</h1>
-        <a href="tasks.php?list_id=<?php echo $task['list_id']; ?>" class="btn btn-primary mb-3">Back to Tasks</a>
+    <div class="container mx-auto max-w-md mt-12 p-6 bg-white rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold text-center text-blue-600 mb-8"><i class="fas fa-edit"></i> Edit Task</h1>
+        
+        <?php if ($update_msg): ?>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded" role="alert">
+                <p><?php echo $update_msg; ?></p>
+            </div>
+        <?php endif; ?>
+
+        <a href="tasks.php?list_id=<?php echo $task['list_id']; ?>" class="inline-block mb-4 px-4 py-2 back-button">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Tasks
+        </a>
 
         <form method="POST" action="">
-            <div class="form-group">
-                <label for="taskDescription">Task Description</label>
-                <input type="text" class="form-control" name="updated_description" id="taskDescription" value="<?php echo htmlspecialchars($task['description']); ?>" required>
+            <div class="form-group mb-6">
+                <label for="taskDescription" class="block text-sm font-medium text-gray-700 mb-1"><i class="fas fa-tasks"></i> Task Description</label>
+                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" name="updated_description" id="taskDescription" value="<?php echo htmlspecialchars($task['description']); ?>" required>
             </div>
-            <button type="submit" name="save_task" class="btn btn-success">Save Changes</button>
+            <button type="submit" name="save_task" class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-150 ease-in-out">
+                <i class="fas fa-save mr-2"></i> Save Changes
+            </button>
         </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
