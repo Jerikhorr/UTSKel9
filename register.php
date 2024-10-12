@@ -15,14 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif ($password !== $confirm_password) {
         $errors[] = "Passwords do not match.";
     } else {
-
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
         $stmt->execute([$username, $email]);
         if ($stmt->rowCount() > 0) {
             $errors[] = "Username or email already exists.";
         } else {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
             $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
             try {
                 $stmt->execute([$username, $email, $hashed_password]);
