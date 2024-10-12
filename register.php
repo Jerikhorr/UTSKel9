@@ -8,129 +8,180 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = sanitize($_POST['username']);
     $email = sanitize($_POST['email']);
     $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
 
-    // Validasi input
-    if (empty($username) || empty($email) || empty($password)) {
+    if (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
         $errors[] = "All fields are required.";
+    } elseif ($password !== $confirm_password) {
+        $errors[] = "Passwords do not match.";
     } else {
-        // Cek apakah username atau email sudah ada
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
         $stmt->execute([$username, $email]);
         if ($stmt->rowCount() > 0) {
             $errors[] = "Username or email already exists.";
         } else {
-            // Hash password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            
-            // Insert user baru ke database
             $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
             try {
                 $stmt->execute([$username, $email, $hashed_password]);
-                redirect('login.php'); // Redirect ke halaman login setelah berhasil
+                redirect('login.php'); 
             } catch (PDOException $e) {
-                $errors[] = "An error occurred: " . $e->getMessage(); // Tampilkan error
+                $errors[] = "An error occurred: " . $e->getMessage(); 
             }
         }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Todo List</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .input-group-text {
-            cursor: pointer;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        body {
+            background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .btn-glow {
+            transition: all 0.3s ease;
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group input {
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .input-group input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+        }
+
+        label, p, h1 {
+            color: #ffffff;
         }
     </style>
 </head>
-<body>
-    <div class="container mt-5">
-        <h1>Register</h1>
-        <?php
-        if (!empty($errors)) {
-            foreach ($errors as $error) {
-                echo "<div class='alert alert-danger'>$error</div>";
-            }
-        }
-        ?>
-        <form method="POST" action="">
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" class="form-control" id="username" name="username" required>
+<body class="flex justify-center items-center min-h-screen bg-gray-900">
+    <div class="fade-in w-full max-w-md">
+        <div class="container p-8 md:p-10">
+            <div class="text-center mb-8">
+                <img src="https://img.icons8.com/clouds/100/000000/add-user-male.png" alt="Register Icon" class="mx-auto mb-4">
+                <h1 class="text-4xl font-bold">Create Account</h1>
+                <p class="text-gray-300 mt-2">Join us and start organizing your tasks!</p>
             </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
+
+            <?php if (!empty($errors)): ?>
+                <?php foreach ($errors as $error): ?>
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded">
+                        <p><?php echo $error; ?></p>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+
+            <!-- Registration form -->
+            <form method="POST" action="" class="space-y-6">
                 <div class="input-group">
-                    <input type="password" class="form-control" id="password" name="password" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="togglePassword">
-                            <img src="https://img.icons8.com/ios-filled/16/000000/visible.png" id="passwordIcon" alt="Show Password"/>
+                    <label for="username" class="block text-sm font-medium mb-1">Username</label>
+                    <div class="relative">
+                        <input type="text" id="username" name="username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <img src="https://img.icons8.com/ios-glyphs/24/999999/user.png" alt="Username Icon" class="w-5 h-5">
                         </span>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="confirm_password">Confirm Password:</label>
+
                 <div class="input-group">
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="toggleConfirmPassword">
-                            <img src="https://img.icons8.com/ios-filled/16/000000/visible.png" id="confirmPasswordIcon" alt="Show Password"/>
+                    <label for="email" class="block text-sm font-medium mb-1">Email</label>
+                    <div class="relative">
+                        <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <img src="https://img.icons8.com/ios-glyphs/24/999999/email.png" alt="Email Icon" class="w-5 h-5">
                         </span>
                     </div>
                 </div>
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
-        <p class="mt-3">Already have an account? <a href="login.php">Login here</a></p>
+
+                <div class="input-group">
+                    <label for="password" class="block text-sm font-medium mb-1">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" name="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <img src="https://img.icons8.com/ios-glyphs/24/999999/lock.png" alt="Lock Icon" class="w-5 h-5">
+                        </span>
+                        <span id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+                            <img src="https://img.icons8.com/ios-filled/16/000000/visible.png" id="passwordIcon" alt="Show Password" class="w-5 h-5"/>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="confirm_password" class="block text-sm font-medium mb-1">Confirm Password</label>
+                    <div class="relative">
+                        <input type="password" id="confirm_password" name="confirm_password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <img src="https://img.icons8.com/ios-glyphs/24/999999/lock.png" alt="Lock Icon" class="w-5 h-5">
+                        </span>
+                        <span id="toggleConfirmPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+                            <img src="https://img.icons8.com/ios-filled/16/000000/visible.png" id="confirmPasswordIcon" alt="Show Password" class="w-5 h-5"/>
+                        </span>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 btn-glow">
+                    Create Account
+                </button>
+            </form>
+
+            <p class="mt-8 text-center text-gray-300">Already have an account? <a href="login.php" class="text-blue-400 hover:underline">Log in here</a></p>
+        </div>
     </div>
 
     <script>
-        // Toggle password visibility for the password field
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordField = document.getElementById('password');
-        const passwordIcon = document.getElementById('passwordIcon');
-        
-        togglePassword.addEventListener('mousedown', function() {
-            passwordField.type = 'text';
-            passwordIcon.src = 'https://img.icons8.com/ios-filled/16/000000/invisible.png'; // Change to "invisible" icon
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.src = 'https://img.icons8.com/ios-filled/16/000000/invisible.png'; 
+            } else {
+                input.type = 'password';
+                icon.src = 'https://img.icons8.com/ios-filled/16/000000/visible.png'; 
+            }
+        }
+
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            togglePasswordVisibility('password', 'passwordIcon');
         });
 
-        togglePassword.addEventListener('mouseup', function() {
-            passwordField.type = 'password';
-            passwordIcon.src = 'https://img.icons8.com/ios-filled/16/000000/visible.png'; // Change back to "visible" icon
-        });
-
-        togglePassword.addEventListener('mouseleave', function() {
-            passwordField.type = 'password';
-            passwordIcon.src = 'https://img.icons8.com/ios-filled/16/000000/visible.png'; // Ensure icon resets when mouse leaves
-        });
-
-        const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-        const confirmPasswordField = document.getElementById('confirm_password');
-        const confirmPasswordIcon = document.getElementById('confirmPasswordIcon');
-        
-        toggleConfirmPassword.addEventListener('mousedown', function() {
-            confirmPasswordField.type = 'text';
-            confirmPasswordIcon.src = 'https://img.icons8.com/ios-filled/16/000000/invisible.png'; // Change to "invisible" icon
-        });
-
-        toggleConfirmPassword.addEventListener('mouseup', function() {
-            confirmPasswordField.type = 'password';
-            confirmPasswordIcon.src = 'https://img.icons8.com/ios-filled/16/000000/visible.png'; // Change back to "visible" icon
-        });
-
-        toggleConfirmPassword.addEventListener('mouseleave', function() {
-            confirmPasswordField.type = 'password';
-            confirmPasswordIcon.src = 'https://img.icons8.com/ios-filled/16/000000/visible.png'; // Ensure icon resets when mouse leaves
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            togglePasswordVisibility('confirm_password', 'confirmPasswordIcon');
         });
     </script>
 </body>
