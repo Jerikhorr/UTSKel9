@@ -148,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </form>
 
             <p class="mt-8 text-center text-gray-300">Don't have an account? <a href="register.php" class="text-yellow-400 hover:text-yellow-500 hover:underline">Register here</a></p>
+            <p class="mt-2 text-center text-gray-300"><a href="forgot_password.php" class="text-yellow-400 hover:text-yellow-500 hover:underline">Forgot Password?</a></p>
         </div>
     </div>
 
