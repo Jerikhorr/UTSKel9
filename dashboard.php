@@ -176,24 +176,24 @@ if (isset($_POST['delete_list'])) {
             </div>
         </div>
         <div class="mb-8">
-            <form method="GET" action="" class="flex flex-wrap items-center space-x-4">
-                <div class="flex-grow">
-                    <input type="text" name="search" placeholder="Search tasks" value="<?php echo htmlspecialchars($search_query); ?>" class="w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                </div>
-                <div>
-                    <select name="filter" class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        <option value="all" <?php echo $filter === 'all' ? 'selected' : ''; ?>>All Tasks</option>
-                        <option value="completed" <?php echo $filter === 'completed' ? 'selected' : ''; ?>>Completed</option>
-                        <option value="incomplete" <?php echo $filter === 'incomplete' ? 'selected' : ''; ?>>Incomplete</option>
-                    </select>
-                </div>
-                <div>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Search
-                    </button>
-                </div>
-            </form>
+    <form method="GET" action="" class="flex items-center space-x-2 bg-white p-2 rounded-lg shadow-md">
+        <div class="flex-grow">
+            <input type="text" name="search" placeholder="Search tasks" value="<?php echo htmlspecialchars($search_query); ?>" class="w-full px-4 py-2 rounded-md border border-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 transition duration-150 ease-in-out">
         </div>
+        <div class="w-48">
+            <select name="filter" class="w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 transition duration-150 ease-in-out">
+                <option value="all" <?php echo $filter === 'all' ? 'selected' : ''; ?>>All Tasks</option>
+                <option value="completed" <?php echo $filter === 'completed' ? 'selected' : ''; ?>>Completed</option>
+                <option value="incomplete" <?php echo $filter === 'incomplete' ? 'selected' : ''; ?>>Incomplete</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md border border-indigo-600 hover:bg-indigo-700 hover:border-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                <i class="fas fa-search mr-2"></i>Search
+            </button>
+        </div>
+    </form>
+</div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
@@ -222,24 +222,26 @@ if (isset($_POST['delete_list'])) {
                 <?php endif; ?>
             </div>
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Recent Tasks</h2>
-                <?php if (empty($tasks)): ?>
-                    <p class="text-gray-500">You don't have any tasks yet. Create a list and add some tasks to get started!</p>
-                <?php else: ?>
-                    <div class="space-y-4">
-                        <?php foreach (array_slice($tasks, 0, 5) as $task): ?>
-                            <div class="bg-white shadow rounded-lg p-4 <?php echo $task['is_completed'] ? 'border-l-4 border-green-500' : ''; ?>">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2"><?php echo htmlspecialchars($task['description']); ?></h3>
-                                <p class="text-sm text-gray-500">
-                                    <span class="mr-2"><i class="fas fa-clipboard-list mr-1"></i><?php echo htmlspecialchars($task['list_title']); ?></span>
-                                    <span><i class="fas fa-calendar-alt mr-1"></i><?php echo date('M d, Y', strtotime($task['created_at'])); ?></span>
-                                </p>
-                            </div>
-                        <?php endforeach; ?>
+            <div>
+    <h2 class="text-2xl font-bold text-gray-900 mb-4">Recent Tasks</h2>
+    <?php if (empty($tasks)): ?>
+        <p class="text-gray-500">You don't have any tasks yet. Create a list and add some tasks to get started!</p>
+    <?php else: ?>
+        <div class="space-y-4">
+            <?php foreach (array_slice($tasks, 0, 5) as $task): ?>
+                <a href="tasks.php?list_id=<?php echo $task['list_id']; ?>" class="block hover:shadow-lg transition duration-300">
+                    <div class="bg-white shadow rounded-lg p-4 <?php echo $task['is_completed'] ? 'border-l-4 border-green-500' : ''; ?>">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2"><?php echo htmlspecialchars($task['description']); ?></h3>
+                        <p class="text-sm text-gray-500">
+                            <span class="mr-2"><i class="fas fa-clipboard-list mr-1"></i><?php echo htmlspecialchars($task['list_title']); ?></span>
+                            <span><i class="fas fa-calendar-alt mr-1"></i><?php echo date('M d, Y', strtotime($task['created_at'])); ?></span>
+                        </p>
                     </div>
-                <?php endif; ?>
-            </div>
+                </a>
+            <?php endforeach; ?>
         </div>
+    <?php endif; ?>
+</div>
 
         <button onclick="openNewListModal()" class="fixed bottom-8 right-8 bg-indigo-600 text-white rounded-lg p-4 shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out transform hover:scale-105">
     <i class="fas fa-plus text-xl"></i>
@@ -247,41 +249,45 @@ if (isset($_POST['delete_list'])) {
 </button>
     </div>
 
-    <!-- New List Modal -->
-    <div id="newListModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <form method="POST" action="">
-                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Create New List</h3>
-                        <div class="mt-4">
-                            <label for="list_title" class="block text-sm font-medium text-gray-700">List Title</label>
-                            <input type="text" name="list_title" id="list_title" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
+ <!-- New List Modal -->
+<div id="newListModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+            <form method="POST" action="">
+                <div class="bg-white px-8 py-8">
+                    <h3 class="text-2xl leading-6 font-bold text-gray-900 mb-6" id="modal-title">Create New List</h3>
+                    <div class="space-y-8">
+                        <div>
+                            <label for="list_title" class="block text-lg font-medium text-gray-700 mb-2">List Title</label>
+                            <input type="text" name="list_title" id="list_title" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-lg border-2 border-gray-300 rounded-md p-4">
+                            <p class="mt-2 text-sm text-gray-500">Choose a clear and descriptive name for your list</p>
                         </div>
-                        <div class="mt-4">
-                            <label for="list_category" class="block text-sm font-medium text-gray-700">Category</label>
-                            <select name="list_category" id="list_category" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                                <option value="">Select Category</option>
+                        <div>
+                            <label for="list_category" class="block text-lg font-medium text-gray-700 mb-2">Category</label>
+                            <select name="list_category" id="list_category" class="mt-1 block w-full py-4 px-4 border-2 border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-lg" required>
+                                <option value="" disabled selected>Select a category</option>
                                 <option value="Work">Work</option>
                                 <option value="Personal">Personal</option>
                                 <option value="Groceries">Groceries</option>
+                                <option value="Other">Other</option>
                             </select>
+                            <p class="mt-2 text-sm text-gray-500">Categorize your list for better organization</p>
                         </div>
                     </div>
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                        <button type="submit" name="new_list" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
-                            Create List
-                        </button>
-                        <button type="button" onclick="closeNewListModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="bg-gray-50 px-8 py-6 sm:flex sm:flex-row-reverse">
+                    <button type="submit" name="new_list" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-6 py-3 bg-indigo-600 text-lg font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto transition duration-150 ease-in-out">
+                        Create List
+                    </button>
+                    <button type="button" onclick="closeNewListModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-6 py-3 bg-white text-lg font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto transition duration-150 ease-in-out">
+                        Cancel
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
