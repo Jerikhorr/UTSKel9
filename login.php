@@ -73,15 +73,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .input-group input {
             transition: all 0.3s ease;
             background-color: rgba(255, 255, 255, 0.9);
+            padding-left: 2.5rem; 
         }
 
         .input-group input:focus {
             transform: translateY(-2px);
             box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+            padding-left: 1rem; 
         }
 
         label, p, h1 {
             color: #ffffff;
+        }
+
+        .input-group label {
+            transition: none;
+        }
+
+        .alert {
+            background-color: rgba(255, 0, 0, 0.8); 
+            color: #ffffff; 
+            border-left: 4px solid #ff0000; 
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
         }
     </style>
 </head>
@@ -96,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <?php if (!empty($errors)): ?>
                 <?php foreach ($errors as $error): ?>
-                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded">
+                    <div class="alert">
                         <p><?php echo $error; ?></p>
                     </div>
                 <?php endforeach; ?>
@@ -107,20 +122,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="input-group">
                     <label for="email" class="block text-sm font-medium mb-1">Email</label>
                     <div class="relative">
-                        <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none email-icon">
                             <img src="https://img.icons8.com/ios-glyphs/24/999999/email.png" alt="Email Icon" class="w-5 h-5">
                         </span>
+                        <input type="email" id="email" name="email" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
                     </div>
                 </div>
 
                 <div class="input-group">
                     <label for="password" class="block text-sm font-medium mb-1">Password</label>
                     <div class="relative">
-                        <input type="password" id="password" name="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none password-icon">
                             <img src="https://img.icons8.com/ios-glyphs/24/999999/lock.png" alt="Lock Icon" class="w-5 h-5">
                         </span>
+                        <input type="password" id="password" name="password" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
                         <span id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
                             <img src="https://img.icons8.com/ios-filled/16/000000/visible.png" id="passwordIcon" alt="Show Password" class="w-5 h-5"/>
                         </span>
@@ -132,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </button>
             </form>
 
-            <p class="mt-8 text-center text-gray-300">Don't have an account? <a href="register.php" class="text-blue-400 hover:underline">Register here</a></p>
+            <p class="mt-8 text-center text-gray-300">Don't have an account? <a href="register.php" class="text-yellow-400 hover:text-yellow-500 hover:underline">Register here</a></p>
         </div>
     </div>
 
@@ -151,6 +166,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         document.getElementById('togglePassword').addEventListener('click', togglePasswordVisibility);
+
+        // Hide icons on focus
+        document.getElementById('email').addEventListener('focus', function() {
+            document.querySelector('.email-icon').style.display = 'none';
+            this.style.paddingLeft = '1rem';
+        });
+
+        document.getElementById('email').addEventListener('blur', function() {
+            if (!this.value) {
+                document.querySelector('.email-icon').style.display = 'flex';
+                this.style.paddingLeft = '2.5rem';
+            }
+        });
+
+        document.getElementById('password').addEventListener('focus', function() {
+            document.querySelector('.password-icon').style.display = 'none';
+            this.style.paddingLeft = '1rem';
+        });
+
+        document.getElementById('password').addEventListener('blur', function() {
+            if (!this.value) {
+                document.querySelector('.password-icon').style.display = 'flex';
+                this.style.paddingLeft = '2.5rem';
+            }
+        });
     </script>
 </body>
 </html>
