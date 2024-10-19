@@ -228,7 +228,7 @@ if (isset($_POST['delete_list'])) {
         <p class="text-gray-500">You don't have any tasks yet. Create a list and add some tasks to get started!</p>
     <?php else: ?>
         <div class="space-y-4">
-            <?php foreach (array_slice($tasks, 0, 5) as $task): ?>
+            <?php foreach (array_slice($tasks, 0, 25) as $task): ?>
                 <a href="tasks.php?list_id=<?php echo $task['list_id']; ?>" class="block hover:shadow-lg transition duration-300">
                     <div class="bg-white shadow rounded-lg p-4 <?php echo $task['is_completed'] ? 'border-l-4 border-green-500' : ''; ?>">
                         <h3 class="text-lg font-semibold text-gray-900 mb-2"><?php echo htmlspecialchars($task['description']); ?></h3>
