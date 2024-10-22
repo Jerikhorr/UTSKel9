@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_task'])) {
         .back-button {
             background-color: #6c63ff; /* Warna tombol sebelum di-hover */
             color: white; /* Warna teks tombol */
-            border-radius: 0.375rem; /* Sudut membulat */
+            border-radius: 0.375rem; /* Sudut membulat */   
             transition: background-color 0.3s; /* Transisi untuk efek hover */
         }
         
