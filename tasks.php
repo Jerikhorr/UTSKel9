@@ -67,158 +67,167 @@ $tasks = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $list['title']; ?> - Todo List</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #f4f6f9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
-
-        .container {
-            max-width: 900px;
-            margin-top: 40px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .btn-custom {
-            background-color: #6c63ff;
-            color: #fff;
-        }
-
-        .btn-custom:hover {
-            box-shadow: 0 0 0 0 rem;
-            background-color: #7300FF;
-            color: #fff;
-
-        }
-
-        .badge-completed {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .badge-incomplete {
-            background-color: #ffc107;
-            color: #343a40;
-        }
-
-        .table th, .table td {
-            vertical-align: middle;
-        }
-
-        .form-control {
-            border-radius: 20px;
-        }
-
-        .input-group-append .btn {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            border-radius: 20px;
-        }
-
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .modal-header {
-            background-color: #6c63ff;
-            color: #fff;
+        .new-task {
+            animation: fadeIn 0.3s ease-out;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h2 class="mb-4"><?php echo htmlspecialchars($list['title']); ?></h2>
-        <a href="dashboard.php" class="btn btn-custom mb-3">Back to Dashboard</a>
+<body class="bg-gray-50">
+    <div class="max-w-5xl mx-auto my-8 bg-white rounded-2xl shadow-sm px-8 py-6">
+        <div class="flex items-center justify-between mb-8 pb-4 border-b-2 border-gray-100">
+            <h2 class="text-2xl font-semibold text-gray-800"><?php echo htmlspecialchars($list['title']); ?></h2>
+            <a href="dashboard.php" class="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-600 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
 
-        <form method="POST" action="" class="mb-3">
-            <div class="input-group">
-                <input type="text" class="form-control" name="task_description" placeholder="New task description" required>
-                <div class="input-group-append">
-                    <button type="submit" name="new_task" class="btn btn-custom">Add Task</button>
-                </div>
+        <form method="POST" action="" class="mb-8">
+            <div class="flex gap-2">
+                <input type="text" 
+                       class="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring focus:ring-indigo-100 transition-all outline-none" 
+                       name="task_description" 
+                       placeholder="What needs to be done?" 
+                       required>
+                <button type="submit" 
+                        name="new_task" 
+                        class="px-6 py-3 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-all transform hover:-translate-y-0.5">
+                    <i class="fas fa-plus mr-2"></i>Add Task
+                </button>
             </div>
         </form>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Task</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($tasks as $task): ?>
+        <div class="rounded-xl border border-gray-200 overflow-hidden">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="w-1/2 px-4 py-4 text-left font-semibold text-gray-600">Task</th>
+                        <th class="w-1/4 px-4 py-4 text-center font-semibold text-gray-600">Status</th>
+                        <th class="w-1/4 px-16 py-4 text-right font-semibold text-gray-600">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($tasks)): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($task['description']); ?></td>
-                        <td class="text-center">
-                            <span class="badge <?php echo $task['is_completed'] ? 'badge-completed' : 'badge-incomplete'; ?> btn">
-                                <?php echo $task['is_completed'] ? 'Completed' : 'Incomplete'; ?>
-                            </span>
-                        </td>
-                        <td class="action-buttons">
-                            <form method="POST" action="" class="d-inline">
-                                <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
-                                <button type="submit" name="toggle_task" class="btn btn-sm btn-<?php echo $task['is_completed'] ? 'info' : 'warning'; ?>">
-                                    <?php echo $task['is_completed'] ? 'Mark Incomplete' : 'Mark Complete'; ?>
-                                </button>
-                            </form>
-                            <form method="GET" action="edit_task.php" class="d-inline">
-                                <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
-                                <button type="submit" class="btn btn-sm btn-warning">Edit</button>
-                            </form>
-                            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="<?php echo $task['id']; ?>">
-                                Delete
-                            </button>
+                        <td colspan="3" class="px-4 py-12 text-center text-gray-500">
+                            <i class="fas fa-tasks fa-2x mb-3"></i>
+                            <p class="mb-0">No tasks yet. Add your first task above!</p>
                         </td>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                    <?php else: ?>
+                    <?php foreach ($tasks as $task): ?>
+                    <tr class="border-t border-gray-200 hover:bg-gray-50 transition-colors">
+                        <td class="px-4 py-4 font-medium text-gray-800"><?php echo htmlspecialchars($task['description']); ?></td>
+                        <td class="px-4 py-4 text-center">
+                            <form method="POST" action="" class="inline">
+                                <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
+                                <button type="submit" 
+                                        name="toggle_task" 
+                                        class="<?php echo $task['is_completed'] 
+                                            ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                                            : 'bg-amber-100 text-amber-700 hover:bg-amber-200'; ?> 
+                                            px-4 py-2 rounded-full font-medium text-sm w-32 transition-colors">
+                                    <?php if ($task['is_completed']): ?>
+                                        <i class="fas fa-check mr-2"></i>Completed
+                                    <?php else: ?>
+                                        <i class="fas fa-clock mr-2"></i>In Progress
+                                    <?php endif; ?>
+                                </button>
+                            </form>
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="flex justify-end gap-2">
+                                <form method="GET" action="edit_task.php" class="inline">
+                                    <input type="hidden" name="task_id" value="<?php echo $task['id']; ?>">
+                                    <button type="submit" 
+                                            class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors text-sm font-medium">
+                                        <i class="fas fa-edit mr-1"></i>Edit
+                                    </button>
+                                </form>
+                                <button type="button" 
+                                        class="px-4 py-2 bg-red-50 text-red-600 rounded-lg border border-red-100 hover:bg-red-100 transition-colors text-sm font-medium"
+                                        onclick="openDeleteModal(<?php echo $task['id']; ?>, '<?php echo htmlspecialchars($task['description']); ?>')">
+                                    <i class="fas fa-trash-alt mr-1"></i>Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+    <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-2xl max-w-md w-full mx-4">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle text-amber-500 mr-2"></i>
+                    <h5 class="text-lg font-semibold text-gray-800">Delete Task</h5>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <p class="mb-1 text-gray-600">Are you sure you want to delete this task? This action cannot be undone.</p>
+                <p class="mb-0"><strong>Task:</strong> <span id="taskDescription" class="text-gray-800"></span></p>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-2">
+                <form method="POST" action="" id="deleteForm">
+                    <input type="hidden" name="task_id" id="modalTaskId">
+                    <button type="button" 
+                            onclick="closeDeleteModal()" 
+                            class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                        Cancel
                     </button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete this task? This action cannot be undone.</p>
-                    <p><strong>Task Description:</strong> <span id="taskDescription"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <form method="POST" action="" id="deleteForm">
-                        <input type="hidden" name="task_id" id="modalTaskId">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" name="delete_task" class="btn btn-danger">Delete</button>
-                    </form>
-                </div>
+                    <button type="submit" 
+                            name="delete_task" 
+                            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                        <i class="fas fa-trash-alt mr-1"></i>Delete Task
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        $('#deleteModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var taskId = button.data('id');
-            var taskDescription = button.closest('tr').find('td:first').text(); // Get the task description
+        // Modal functions
+        function openDeleteModal(taskId, description) {
+            document.getElementById('deleteModal').classList.remove('hidden');
+            document.getElementById('modalTaskId').value = taskId;
+            document.getElementById('taskDescription').textContent = description;
+        }
 
-            var modal = $(this);
-            modal.find('#modalTaskId').val(taskId);
-            modal.find('#taskDescription').text(taskDescription); // Set the task description in the modal
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
+
+        // Add fade-in animation for new tasks
+        document.querySelector('form').addEventListener('submit', function() {
+            setTimeout(function() {
+                const firstRow = document.querySelector('tbody tr:first-child');
+                if (firstRow) {
+                    firstRow.classList.add('new-task');
+                }
+            }, 100);
         });
     </script>
 </body>
