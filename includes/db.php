@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
-$dbname = 'todo_list';
-$username = 'root';  // Change this to your MySQL username
-$password = '';      // Change this to your MySQL password
+$dbname = 'supd5886_todo';
+$username = 'supd5886_Lamian';  // Change this to your MySQL username
+$password = 'Lamian12';      // Change this to your MySQL password
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
